@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 
-#include <torch/script.h>
+#include "ModelTree.h"
+
+using namespace std;
+
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -10,13 +13,11 @@ int main(int argc, char* argv[]) {
     torch::jit::script::Module module;
     try {
         module = torch::jit::load(argv[1]);
-        for(auto it: module.named_parameters()){
-            std::cout << it.name << " " << it.value.sizes() << std::endl;
-        }
     } catch (const c10::Error& e) {
         std::cerr << "error loading the model" << std::endl;
         return -1;
     }
-    std::cout << "ok" << std::endl;
+    ModelCompiler::ModelTree* tree = new ModelCompiler::ModelTree();
+    tree->build(module);
     return 0;
 }

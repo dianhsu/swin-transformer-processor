@@ -7,7 +7,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_PREFIX_PATH "libtorch")
 
 find_package(Torch REQUIRED)
+include_directories(include)
 
-add_executable(parser parser.cpp)
+file(GLOB SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-target_link_libraries(parser ${TORCH_LIBRARIES})
+add_executable(main main.cpp ${SRC})
+
+target_link_libraries(main ${TORCH_LIBRARIES})
