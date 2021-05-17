@@ -21,9 +21,9 @@ struct ModelNode {
     ModelNodeType type;
     std::string typeDetail;
     std::string name;
-    
+
     ModelNode(const std::string&);
-    void debug(int indent);
+    void debug(int indent, std::ostream&);
     void debug();
     void recursiveBuild(const torch::jit::script::Module& module, ModelNode* prev);
 };

@@ -13,12 +13,13 @@ int main(int argc, char* argv[]) {
     torch::jit::script::Module module;
     try {
         module = torch::jit::load(argv[1]);
+        module.eval();
     } catch (const c10::Error& e) {
         std::cerr << "error loading the model" << std::endl;
         return -1;
     }
     ModelCompiler::ModelTree* tree = new ModelCompiler::ModelTree();
     tree->build(module);
-    //tree->debug();
+    tree->debug();
     return 0;
 }

@@ -1,9 +1,10 @@
-#ifndef __MODEL_NODE_H__
-#define __MODEL_NODE_H__
+#ifndef __MODEL_CELL_H__
+#define __MODEL_CELL_H__
 
-namespace ModelCompiler{
-class Cell{
+namespace ModelCompiler {
 
+struct Cell {
+    std::vector<int> iDim, oDim, pDim;
 };
 
 }

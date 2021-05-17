@@ -3,6 +3,10 @@
 
 #include <torch/script.h>
 
+#include <vector>
+
+#include "cell.h"
+
 #include "model_node.h"
 
 namespace ModelCompiler {
@@ -11,6 +15,7 @@ struct ModelTree {
     ModelTree();
     void build(const torch::jit::script::Module& module);
     void debug();
+    std::vector<Cell> flatten();
 };
 }
 

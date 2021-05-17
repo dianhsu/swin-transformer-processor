@@ -5,7 +5,7 @@ ModelCompiler::ModelNodeType getModelType(const std::string& name) {
     std::string tmp = name.substr(name.find_last_of('.') + 1);
     if (tmp == "Linear" or tmp == "Conv2d" or tmp == "Identity") {
         return ModelCompiler::ModelNodeType::MATRIX;
-    } else if (tmp == "LayerNorm" || tmp == "Softmax" or tmp == "GELU" or tmp == "Dropout" or tmp == "AdaptiveAvgPool1d" or tmp == "DropPath") {
+    } else if (tmp == "LayerNorm" or tmp == "Softmax" or tmp == "GELU" or tmp == "Dropout" or tmp == "AdaptiveAvgPool1d" or tmp == "DropPath") {
         return ModelCompiler::ModelNodeType::UNLINEAR;
     } else {
         return ModelCompiler::ModelNodeType::CONTAINER;
@@ -18,21 +18,21 @@ ModelCompiler::ModelNode::ModelNode(const std::string& nameParam) : type(CONTAIN
     this->childEnd = nullptr;
 }
 void ModelCompiler::ModelNode::debug() {
-    this->debug(0);
+    this->debug(0, std::cout);
 }
-void ModelCompiler::ModelNode::debug(int indent) {
+void ModelCompiler::ModelNode::debug(int indent, std::ostream& out) {
     if (indent > 0) {
         std::string indentStr(indent, ' ');
-        std::cout << indentStr;
+        out << indentStr;
     }
-    std::cout << "< Name: " << this->name << ", Type: " << this->type
+    out << "< Name: " << this->name << ", Type: " << this->type
         << ", Detail: " << this->typeDetail << " >" << std::endl;
     if (this->left != nullptr) {
-        this->left->debug(indent + 4);
+        this->left->debug(indent + 4, out);
     }
     auto ptr = this->right;
     while (ptr != nullptr) {
-        ptr->debug(indent);
+        ptr->debug(indent, out);
         ptr = ptr->right;
     }
 }
