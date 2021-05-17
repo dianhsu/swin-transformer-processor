@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#include "ModelTree.h"
+#include "model_tree.h"
 
 using namespace std;
 
@@ -19,6 +19,6 @@ int main(int argc, char* argv[]) {
     }
     ModelCompiler::ModelTree* tree = new ModelCompiler::ModelTree();
     tree->build(module);
-    tree->show();
+    //tree->debug();
     return 0;
 }

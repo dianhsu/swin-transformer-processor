@@ -3,14 +3,14 @@
 
 #include <torch/script.h>
 
-#include "ModelNode.h"
+#include "model_node.h"
 
 namespace ModelCompiler {
 struct ModelTree {
     ModelNode* root;
     ModelTree();
     void build(const torch::jit::script::Module& module);
-    void show();
+    void debug();
 };
 }
 

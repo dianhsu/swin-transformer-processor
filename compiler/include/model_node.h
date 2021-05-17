@@ -6,17 +6,25 @@
 #include "torch/script.h"
 
 namespace ModelCompiler {
+enum ModelNodeType {
+    CONTAINER,
+    MATRIX,
+    VECTOR,
+    UNLINEAR
+};
 struct ModelNode {
     // left son, right brother
     ModelNode* left;
     ModelNode* right;
     ModelNode* childEnd;
+
+    ModelNodeType type;
+    std::string typeDetail;
     std::string name;
-    std::vector<int> dim;
-    std::vector<int> data;
+    
     ModelNode(const std::string&);
-    void show(int indent);
-    void show();
+    void debug(int indent);
+    void debug();
     void recursiveBuild(const torch::jit::script::Module& module, ModelNode* prev);
 };
 }
