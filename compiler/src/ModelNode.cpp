@@ -9,8 +9,11 @@ void ModelCompiler::ModelNode::show() {
     this->show(0);
 }
 void ModelCompiler::ModelNode::show(int indent) {
-    std::string indentStr(indent, ' ');
-    std::cout << indentStr << this->name << std::endl;
+    if (indent > 0) {
+        std::string indentStr(indent, ' ');
+        std::cout << indentStr;
+    }
+    std::cout << this->name << std::endl;
     if (this->left != nullptr) {
         this->left->show(indent + 2);
     }

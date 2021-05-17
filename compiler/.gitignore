@@ -2,3 +2,4 @@ build/
 libtorch/
 *.pth
 *.pt
+.vscode/
