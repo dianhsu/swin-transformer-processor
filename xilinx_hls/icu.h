@@ -7,6 +7,7 @@
  * @param size Instructions Count
  * */
 
+#define EXIT 0x00
 #define MOVV 0x01
 #define ADDV 0x02
 #define MMR  0x03
@@ -17,16 +18,20 @@
 #define SWT1 0x06
 #define SWT2 0x07
 
+static int eax = 0;
 
 template<typename T>
-void icu(int *eip, int size){
-    for(int i = 0; i < size; ++i){
-        switch(*eip){
-            
-            default:
-                break;
+void icu(int* eip, T* param, T* data, T* local) {
+    while (1) {
+        switch (*eip) {
+        case EXIT:
+            return;
+        case MEMLOAD:
+                        
+            break;
+        default:
+            break;
         }
-        ++eip;
     }
 }
 

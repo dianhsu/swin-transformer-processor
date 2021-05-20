@@ -1,6 +1,5 @@
 #include "main.h"
 
-void project_top(data_t input[SZ][SZ], data_t output[SZ][SZ]){
-
+void project_top(int* ip, data_t* data, data_t* param) {
 
 }
