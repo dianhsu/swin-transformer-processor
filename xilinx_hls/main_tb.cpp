@@ -1,8 +1,9 @@
 #include "main.h"
 
 int main() {
-    data_t input[SZ][SZ];
-    data_t output[SZ][SZ];
-    project_top(input, output);
+    int ip[10000];
+    data_t data[100000];
+    data_t param[100000];
+    project_top(ip, data, param);
     return 0;
 }
