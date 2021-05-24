@@ -275,7 +275,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#linear">Linear</a>
 <ul>
 <li><a href="#matrix-multiply">Matrix Multiply</a></li>
-<li><a href="#add-bias">Add Bias</a></li>
+<li><a href="#%E6%B1%82%E5%92%8Cadd-bias">&#x6C42;&#x548C;(add bias)</a></li>
 </ul>
 </li>
 </ul>
@@ -361,7 +361,8 @@ pre[data-line] .line-highlight[data-end]:after {
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></pre><p>&#x8FD9;&#x6837;&#x7684;&#x8BDD;&#xFF0C;Linear&#x4E2D;&#x8C03;&#x7528;Matrix Multiply&#x7684;&#x4EE3;&#x7801;&#x5E94;&#x8BE5;&#x662F;&#x8FD9;&#x6837;&#x5B50;<br>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></pre><p>&#x8FD9;&#x90E8;&#x5206;&#x7684;&#x8FD0;&#x7B97;&#xFF0C;&#x76F4;&#x63A5;&#x56FA;&#x5316;&#x5728;FPGA&#x4E0A;&#x9762;<br>
+&#x8FD9;&#x6837;&#x7684;&#x8BDD;&#xFF0C;Linear&#x4E2D;&#x8C03;&#x7528;Matrix Multiply&#x7684;&#x4EE3;&#x7801;&#x5E94;&#x8BE5;&#x662F;&#x8FD9;&#x6837;&#x5B50;<br>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Input&#xA0;Blocks:</mtext><mo stretchy="false">[</mo><mi>&#x3B1;</mi><mo stretchy="false">]</mo><mspace linebreak="newline"></mspace><mtext>Output&#xA0;Blocks:</mtext><mo stretchy="false">[</mo><mi>&#x3B2;</mi><mo stretchy="false">]</mo><mspace linebreak="newline"></mspace><mtext>Params&#xA0;Blocks:</mtext><mo stretchy="false">[</mo><mi>&#x3B1;</mi><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>&#x3B2;</mi><mo stretchy="false">]</mo><mspace linebreak="newline"></mspace><msub><mtext>Linear</mtext><mi>j</mi></msub><mo>=</mo><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>0</mn></mrow><mi>&#x3B1;</mi></munderover><mtext>Input</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo>&#x2217;</mo><mtext>Params</mtext><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\text{Input Blocks:} [\alpha] \\
 \text{Output Blocks:} [\beta] \\
 \text{Params Blocks:} [\alpha][\beta] \\
@@ -402,9 +403,18 @@ pre[data-line] .line-highlight[data-end]:after {
 <span class="token punctuation">}</span>
 
 
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></pre><h5 class="mume-header" id="add-bias">Add Bias</h5>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></pre><p>&#x1F388; <em><strong>&#x6709;&#x4E2A;&#x5C0F;&#x95EE;&#x9898;</strong></em>&#xFF1A;&#x5728;&#x5B9E;&#x9645;&#x64CD;&#x4F5C;&#x4E2D;&#x9700;&#x8981;&#x8003;&#x8651;&#x7528;&#x5168;&#x5C40;&#x53D8;&#x91CF;&#x4EE3;&#x66FF;&#x5C40;&#x90E8;&#x53D8;&#x91CF;&#xFF0C;&#x4EE5;&#x4FBF;&#x51CF;&#x5C11;&#x6570;&#x636E;&#x62F7;&#x8D1D;&#x6B21;&#x6570;&#x3002;&#x7279;&#x522B;&#x6307;&#x7684;&#x662F;<code>paramTmp</code>&#x548C;<code>outputBoxTmp</code>&#x3002;</p>
+<h5 class="mume-header" id="%E6%B1%82%E5%92%8Cadd-bias">&#x6C42;&#x548C;(add bias)</h5>
 
-<h3 class="mume-header" id="swin-block">Swin Block</h3>
+<p>&#x8FD9;&#x90E8;&#x5206;&#x7684;&#x5B9E;&#x73B0;&#x6BD4;&#x8F83;&#x7B80;&#x5355;</p>
+<pre data-role="codeBlock" data-info="cpp" class="language-cpp"><span class="token keyword">template</span><span class="token operator">&lt;</span><span class="token keyword">typename</span> <span class="token class-name">T</span><span class="token punctuation">,</span> <span class="token keyword">int</span> C<span class="token operator">&gt;</span>
+<span class="token keyword">void</span> <span class="token function">add_bias</span><span class="token punctuation">(</span>T<span class="token operator">*</span> input1<span class="token punctuation">,</span> T<span class="token operator">*</span> input2<span class="token punctuation">,</span> T<span class="token operator">*</span> output<span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> C<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">pragma</span> <span class="token expression">HLS UNROLL</span></span>
+        output<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> input1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+</span> input2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h3 class="mume-header" id="swin-block">Swin Block</h3>
 
 <h3 class="mume-header" id="swin-blockshift-window">Swin Block(Shift Window)</h3>
 

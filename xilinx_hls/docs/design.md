@@ -55,7 +55,7 @@ graph LR
 这样的话，我们设定矩阵乘法中同时计算元素的数量是$C$，值得一提的是$C$在官方的版本中是$96$。
 
 @import "PartitionMerge/MatrixMultiply/main.cpp" {class="line-numbers"}
-
+这部分的运算，直接固化在FPGA上面
 这样的话，Linear中调用Matrix Multiply的代码应该是这样子
 $$
 \text{Input Blocks:} [\alpha] \\
@@ -70,8 +70,21 @@ $$
 
 @import "PartitionMerge/MatrixMultiply/wrapper.cpp" {class="line-numbers"}
 
-##### Add Bias
+:balloon: ***有个小问题***：在实际操作中需要考虑用全局变量代替局部变量，以便减少数据拷贝次数。特别指的是`paramTmp`和`outputBoxTmp`。
 
+
+##### 求和(add bias)
+这部分的实现比较简单
+
+```cpp
+template<typename T, int C>
+void add_bias(T* input1, T* input2, T* output){
+    for(int i = 0; i < C; ++i){
+#pragma HLS UNROLL
+        output[i] = input1[i] + input2[i];
+    }
+}
+```
 ### Swin Block
 
 
