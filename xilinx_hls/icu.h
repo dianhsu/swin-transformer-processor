@@ -26,8 +26,7 @@ void icu(int* eip, T* param, T* data, T* local) {
         switch (*eip) {
         case EXIT:
             return;
-        case MEMLOAD:
-                        
+        case MEMLOAD:     
             break;
         default:
             break;
