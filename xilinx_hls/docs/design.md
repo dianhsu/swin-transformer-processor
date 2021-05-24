@@ -29,6 +29,7 @@ graph LR
     Start -- H/4,W/4,C --> ur(Unfolder Reshape)
     ur -- H/8,W/8,4C --> lr(Linear)
     lr -- H/8,W/8,2C --> End
+
 ```
 
 #### Unfolder Reshape
@@ -42,6 +43,34 @@ graph LR
 
 #### Linear
 
+```mermaid
+graph LR
+    Start -- H/8,W/8,4C --> mmu(Matrix Multiply)
+    mmu -- H/8,W/8,2C --> ba(Bias Add)
+    ba -- H/8,W/8,2C --> End
+```
+
+##### Matrix Multiply
+
+这样的话，我们设定矩阵乘法中同时计算元素的数量是$C$，值得一提的是$C$在官方的版本中是$96$。
+
+@import "PartitionMerge/MatrixMultiply/main.cpp" {class="line-numbers"}
+
+这样的话，Linear中调用Matrix Multiply的代码应该是这样子
+$$
+\text{Input Blocks:} [\alpha] \\
+\text{Output Blocks:} [\beta] \\
+\text{Params Blocks:} [\alpha][\beta] \\
+\text{Linear}_{j} = \sum_{i=0}^{\alpha} \text{Input}[i] * \text{Params}[i][j]
+$$
+
+@import "http://cdn.dianhsu.top/img/20210524202305.svg" {width=500}
+
+以下是实现代码
+
+@import "PartitionMerge/MatrixMultiply/wrapper.cpp" {class="line-numbers"}
+
+##### Add Bias
 
 ### Swin Block
 
