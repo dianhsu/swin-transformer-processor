@@ -26,18 +26,18 @@ graph LR
 
 ```mermaid
 graph LR
-    Start -- H/4,W/4,C --> ur(Unfolder Resharp)
+    Start -- H/4,W/4,C --> ur(Unfolder Reshape)
     ur -- H/8,W/8,4C --> lr(Linear)
     lr -- H/8,W/8,2C --> End
 ```
 
-#### Unfolder Resharp
+#### Unfolder Reshape
 
 实际上Unfold的作用如下图所示
 
-@import "http://cdn.dianhsu.top/img/20210524135033.svg" {width=450}
+@import "http://cdn.dianhsu.top/img/20210524135033.svg" {width=500}
 
-输入数据是一个 $H,W,C$ 的立方体，Unfolder Resharp的作用是将它切分成 $ds, ds, C$ 的小立方体立方体。那么立方体的个数是$\frac{W \times H}{ds^2}$，将小立方体的数据排成一排。得到的输出就是$[\frac{W \times H}{ds^2}, ds^2 \times C ]$。
+输入数据是一个 $H,W,C$ 的立方体，Unfolder Reshape的作用是将它切分成 $ds, ds, C$ 的小立方体立方体。那么立方体的个数是$\frac{W \times H}{ds^2}$，将小立方体的数据排成一排。得到的输出就是$[\frac{W \times H}{ds^2}, ds^2 \times C ]$。
 
 
 #### Linear
