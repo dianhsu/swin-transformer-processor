@@ -2,6 +2,8 @@
 
 ---
 [TOC]
+## Overall Structure
+![Swin Transformer](http://cdn.dianhsu.top/img/20210526115053.png)
 
 ```mermaid
 graph LR
@@ -38,8 +40,37 @@ graph LR
 
 @import "http://cdn.dianhsu.top/img/20210524135033.svg" {width=500}
 
-输入数据是一个 $H,W,C$ 的立方体，Unfolder Reshape的作用是将它切分成 $ds, ds, C$ 的小立方体立方体。那么立方体的个数是$\frac{W \times H}{ds^2}$，将小立方体的数据排成一排。得到的输出就是$[\frac{W \times H}{ds^2}, ds^2 \times C ]$。
+输入数据是一个 $H,W,C$ 的立方体，Unfolder Reshape的作用是将它切分成 $ds, ds, C$ 的小立方体。那么立方体的个数是$\frac{W \times H}{ds^2}$，将小立方体的数据排成一排。得到的输出就是$[\frac{W \times H}{ds^2}, ds^2 \times C ]$。
 
+这部分应该归并到数据选择上面(Data Selection)，数据选择是一个灵活性比较高的模块。由于这部分数据没有重叠，可以不考虑使用缓存。直接选择数据到下一个模块中就可以了。
+```cpp
+/**
+ * @param input 输入数据基址
+ * @param output 输出数据基址
+ * @param sx 选择的数据的第一维的起点
+ * @param sy 选择的数据的第二维的起点
+ * @param sz 选择的数据的第三维的起点
+ * @param lx 选择的数据的第一维的长度
+ * @param ly 选择的数据的第二维的长度
+ * @param lz 选择的数据的第三维的长度
+ * @param h 输入数据的第一维
+ * @param w 输入数据的第二维
+ * @param c 输入数据的第三维
+ * */
+template<typename T>
+void box_data_selection(T *input, T* output, int sx, int sy, int sz, int lx, int ly, int lz, int h, int w, int c){
+    for(int i = 0; i < lx; ++i){
+        for(int j = 0; j < ly; ++j){
+            for(int k = 0; k < lz; ++k){
+#pragma HLS pipeline
+                // output[i][j][k] = input[sx + i][sy + j][sz + k];
+                output[i * ly * lz + j * lz + k] = input[(sx + i) * w * c + (sy + j) * c + sz + k];
+            }
+        }
+    }
+}
+
+```
 
 #### Linear
 
@@ -52,7 +83,7 @@ graph LR
 
 ##### Matrix Multiply
 
-这样的话，我们设定矩阵乘法中同时计算元素的数量是$C$，值得一提的是$C$在官方的版本中是$96$。
+这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$32$**。
 
 @import "PartitionMerge/MatrixMultiply/main.cpp" {class="line-numbers"}
 这部分的运算，直接固化在FPGA上面
@@ -73,19 +104,193 @@ $$
 :balloon: ***有个小问题***：在实际操作中需要考虑用全局变量代替局部变量，以便减少数据拷贝次数。特别指的是`paramTmp`和`outputBoxTmp`。
 
 
-##### 求和(add bias)
-这部分的实现比较简单
-
+##### 四则运算
+这部分的实现比较简单:fire:
+第一部分是向量与常数的运算。
 ```cpp
+/**
+ * @brief 向量和常数的基础运算
+ * @note 这里的输入和输出应该是完全分割之后的，这样才可以进行UNROLL。
+ * 
+ * */
+
 template<typename T, int C>
-void add_bias(T* input1, T* input2, T* output){
+void basic(T* input, T param, int method){
     for(int i = 0; i < C; ++i){
-#pragma HLS UNROLL
-        output[i] = input1[i] + input2[i];
+#pragma HLS unroll
+        switch(method){
+        case 0x01: // 加法
+            output[i] += param;
+            break;
+        case 0x02: // 减法
+            output[i] -= param;
+            break;
+        case 0x04: // 乘法
+            output[i] *= param;
+            break;
+        case 0x08: // 除法
+            output[i] /= param;
+            break;
+        }
     }
 }
 ```
+第二部分是向量与向量间的运算。
+```cpp
+/**
+ * @brief 向量和向量的基础运算
+ * 
+ * 
+ * */
+template<typename T, int C>
+void basic_dots(T* input, T* output, int method){
+    for(int i = 0; i < C; ++i){
+#pragma HLS unroll
+        switch(method){
+        case 0x01: // 加法
+            output[i] += input[i];
+            break;
+        case 0x02: // 减法
+            output[i] -= input[i];
+            break;
+        case 0x04: // 乘法
+            output[i] *= input[i];
+            break;
+        case 0x08: // 除法
+            output[i] /= input[i];
+            break;
+        }
+    }
+}
+```
+
+
 ### Swin Block
+Swin Block 有两种，一种是shift window的，一种是普通的，其实和普通的相比，也只是修改了数据选择的起点
+
+#### Layer Normalization
+
+离散随机变量
+$$ 
+Var(x) = E(x^2) - E^2(x) \\
+E(x) = \frac{1}{n} \sum_{i = 1}^{n} x_i \\
+E^2(x) = \frac{1}{n} \sum_{i = 1}^{n} x_i^2
+$$
+Batch Normalization
+[https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm1d.html#torch.nn.BatchNorm1d](https://pytorch.org/docs/stable/generated/torch.nn.BatchNorm1d.html#torch.nn.BatchNorm1d)
+$$
+y = \frac{x - E[x]}{\sqrt{Var[x] + \epsilon}} * \gamma + \beta
+$$
+```cpp
+/**
+ * @brief Layer Normalization
+ * @param input 输入基址
+ * @param output 输出基址
+ * @param batch 单组输入数据大小
+ * @param eps 见公式中描述
+ * @param gamma 见公式中描述
+ * @param beta 见公式中描述
+ * @note 好像做不到unroll
+ * */
+template<typename T>
+void layer_normalization(T* input, T* output, int batch, T eps, T gamma, T beta){
+    T sum = 0;
+    T sum2 = 0;
+
+    for(int i = 0; i < batch; ++i){
+#pragma HLS pipeline
+        sum += input[i];
+        sum2 += input[i] * input[i];
+    }
+    // Variance
+    T avg = sum / batch;
+    T varx =sum2 / batch -  sum * avg; 
+    for (int j = 0; j < batch; ++j) {
+#pragma HLS pipeline
+        output[j] = (input[j] - avg) / sqrt(varx  + eps) * gamma + beta;
+    }
+}
+
+```
+#### Window Attention
+
+
+##### Attention Part
+
+Tiny Swin Transformer 第二层参数的示意图
+```mermaid
+graph TD
+    
+    scale["scale: scalar"] -- "tmp * scale" --> tmp1
+    ps["Position Embedding: [49, 49]"] -- "Pisition Embedding + tmp1" --> tmp2
+    input["input: [56, 56, 96]"] -- "Linear(input)" --> TQ
+    TQ["TQ: [56, 56, 96]"] -- "Reshape" --> Q
+    Q["Q: [3, 64, 49, 32]"] -- "Q x Kt" --> tmp
+    tmp["tmp: [3, 64, 49, 49]"] -- "tmp * scale" --> tmp1
+    tmp1["tmp1: [3, 64, 49, 49]"] -- "Pisition Embedding + tmp1" --> tmp2
+    tmp2["tmp2: [3, 64, 49, 49]"] -- "softmax(tmp2)" --> tmp3
+    input -- "Linear(input)" --> TK
+    TK["TK: [56, 56, 96]"] -- "Reshape" --> K
+    K["K: [3, 64, 49, 32]"] -- "Q x Kt" --> tmp
+    input -- "Linear(input)" --> TV
+    
+    tmp3["tmp3: [3, 64, 49, 49]"] -- "tmp3 x tmpV" --> tmp4
+    V["V: [3, 64, 49, 32]"] -- "tmp3 x tmpV" --> tmp4
+    tmp4["tmp4: [3, 64, 49, 32]"] -- "Reshape" --> tmp5
+    tmp5["tmp5: [56, 56, 96]"] -- "tmp5 + input" --> tmp6
+    input -- "tmp5 + input" --> tmp6
+    tmp6["tmp6: [56, 56, 96]"] -- "Linear(tmp6)" --> Output
+    heads["Heads: scalar"] --> Q
+    heads["Heads: scalar"] --> K
+    heads["Heads: scalar"] --> V
+    TV["TV: [56, 56, 96]"] -- "Reshape" --> V
+
+```
+
+###### Softmax
+公式如下
+$$
+    Softmax(x_i) = \frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}  
+$$
+实现代码
+```cpp
+/**
+ * @brief 计算Softmax
+ * @param input 输入基址
+ * @param output 输出基址
+ * @param batch 组大小
+ * @note 指数函数需要自己实现一下，一是定点数并没有实现指数函数，二是拟合可以加快求解速度
+ * */
+template<typename T>
+void softmax(T* input, T* output, int batch){
+    T sum = 0;
+    for(int i = 0; i < batch; ++i){
+#pragma HLS pipeline
+        sum += exp(input[i]);
+    }
+    for(int i = 0; i < batch; ++i){
+#pragma HLS pipeline
+        output[i] = exp(input[i]) / sum;
+    }
+}
+```
+##### Feed Forward Part
+
+
+**GELU**：关于GELU，通常是使用这个公式进行拟合
+$$
+    GELU(x) = 0.5x(1+tanh[\sqrt{2/\pi}(x+0.044715x^3)])
+$$
+
+```mermaid
+graph LR
+    Input -- "Linear(Input)" --> tmp1
+    tmp1 -- "GELU(tmp1)" --> tmp2
+    tmp2 -- "Linear(tmp2)" --> tmp3
+    Input -- "Input + tmp3" --> Output
+    tmp3 -- "Input + tmp3" --> Output
+```
+
 
 
 ### Swin Block(Shift Window)
