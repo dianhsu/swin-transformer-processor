@@ -31,7 +31,6 @@ graph LR
     Start -- H/4,W/4,C --> ur(Unfolder Reshape)
     ur -- H/8,W/8,4C --> lr(Linear)
     lr -- H/8,W/8,2C --> End
-
 ```
 
 #### Unfolder Reshape
@@ -83,7 +82,7 @@ graph LR
 
 ##### Matrix Multiply
 
-这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$32$**。
+这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$96$**。
 
 @import "PartitionMerge/MatrixMultiply/main.cpp" {class="line-numbers"}
 这部分的运算，直接固化在FPGA上面
@@ -220,32 +219,58 @@ void layer_normalization(T* input, T* output, int batch, T eps, T gamma, T beta)
 Tiny Swin Transformer 第二层参数的示意图
 ```mermaid
 graph TD
-    
+    subgraph Selected Data Multiply
+        Q
+        K
+        tmp
+        V
+        scale
+        tmp1
+        tmp2
+        pp
+        tmp3
+        tmp4
+    end
     scale["scale: scalar"] -- "tmp * scale" --> tmp1
-    ps["Position Embedding: [49, 49]"] -- "Pisition Embedding + tmp1" --> tmp2
-    input["input: [56, 56, 96]"] -- "Linear(input)" --> TQ
-    TQ["TQ: [56, 56, 96]"] -- "Reshape" --> Q
-    Q["Q: [3, 64, 49, 32]"] -- "Q x Kt" --> tmp
-    tmp["tmp: [3, 64, 49, 49]"] -- "tmp * scale" --> tmp1
-    tmp1["tmp1: [3, 64, 49, 49]"] -- "Pisition Embedding + tmp1" --> tmp2
-    tmp2["tmp2: [3, 64, 49, 49]"] -- "softmax(tmp2)" --> tmp3
+    pp["Position Embedding: [49, 49]"] -- "Position Embedding + tmp1" --> tmp2
+    input["input: [28, 28, 192]"] -- "Linear(input)" --> TQ
+    TQ["TQ: [28, 28, 192]"] -- "Reshape" --> Q
+    Q["Q: [6, 16, 49, 32]"] -- "Q x Kt" --> tmp
+    tmp["tmp: [6, 16, 49, 49]"] -- "tmp * scale" --> tmp1
+    tmp1["tmp1: [6, 16, 49, 49]"] -- "Position Embedding + tmp1" --> tmp2
+    tmp2["tmp2: [6, 16, 49, 49]"] -- "softmax(tmp2)" --> tmp3
     input -- "Linear(input)" --> TK
-    TK["TK: [56, 56, 96]"] -- "Reshape" --> K
-    K["K: [3, 64, 49, 32]"] -- "Q x Kt" --> tmp
+    TK["TK: [28, 28, 192]"] -- "Reshape" --> K
+    K["K: [6, 16, 49, 32]"] -- "Q x Kt" --> tmp
     input -- "Linear(input)" --> TV
     
-    tmp3["tmp3: [3, 64, 49, 49]"] -- "tmp3 x tmpV" --> tmp4
-    V["V: [3, 64, 49, 32]"] -- "tmp3 x tmpV" --> tmp4
-    tmp4["tmp4: [3, 64, 49, 32]"] -- "Reshape" --> tmp5
-    tmp5["tmp5: [56, 56, 96]"] -- "tmp5 + input" --> tmp6
+    tmp3["tmp3: [6, 16, 49, 49]"] -- "tmp3 x tmpV" --> tmp4
+    V["V: [6, 16, 49, 32]"] -- "tmp3 x tmpV" --> tmp4
+    tmp4["tmp4: [6, 16, 49, 32]"] -- "Reshape" --> tmp5
+    tmp5["tmp5: [28, 28, 192]"] -- "tmp5 + input" --> tmp6
     input -- "tmp5 + input" --> tmp6
-    tmp6["tmp6: [56, 56, 96]"] -- "Linear(tmp6)" --> Output
-    heads["Heads: scalar"] --> Q
-    heads["Heads: scalar"] --> K
-    heads["Heads: scalar"] --> V
-    TV["TV: [56, 56, 96]"] -- "Reshape" --> V
+    tmp6["tmp6: [28, 28, 192]"] -- "Linear(tmp6)" --> Output
+    
+    TV["TV: [28, 28, 192]"] -- "Reshape" --> V
 
 ```
+
+Swin Transformer 中的 Window Attention有多个维度的矩阵乘法，我可以使用多个模块来代替。 
+
+###### Reshape :question:
+
+```cpp
+template<typename T>
+void reshape1(T* input, T* output,){
+    
+}
+
+template<typename T>
+void reshape2(T* input, T* output){
+
+}
+```
+
 
 ###### Softmax
 公式如下
