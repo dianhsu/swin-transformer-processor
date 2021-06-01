@@ -84,7 +84,7 @@ graph LR
 
 这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$96$**。
 
-@import "PartitionMerge/MatrixMultiply/main.cpp" {class="line-numbers"}
+@import "code/main.cpp" {class="line-numbers"}
 这部分的运算，直接固化在FPGA上面
 这样的话，Linear中调用Matrix Multiply的代码应该是这样子
 $$
@@ -98,7 +98,7 @@ $$
 
 以下是实现代码
 
-@import "PartitionMerge/MatrixMultiply/wrapper.cpp" {class="line-numbers"}
+@import "code/wrapper.cpp" {class="line-numbers"}
 
 :balloon: ***有个小问题***：在实际操作中需要考虑用全局变量代替局部变量，以便减少数据拷贝次数。特别指的是`paramTmp`和`outputBoxTmp`。
 
@@ -255,22 +255,13 @@ graph TD
 
 ```
 
-Swin Transformer 中的 Window Attention有多个维度的矩阵乘法，我可以使用多个模块来代替。 
+Swin Transformer 中的 Window Attention有多个维度的矩阵乘法，可以使用多个模块来代替。 
 
 ###### Reshape :question:
 
-```cpp
-template<typename T>
-void reshape1(T* input, T* output,){
-    
-}
+考虑Window Attention中的Reshape部分，本质上是三维的数据选择。
 
-template<typename T>
-void reshape2(T* input, T* output){
-
-}
-```
-
+@import "code/data_select.cpp"
 
 ###### Softmax
 公式如下
@@ -308,14 +299,56 @@ $$
 $$
 
 ```mermaid
-graph LR
-    Input -- "Linear(Input)" --> tmp1
-    tmp1 -- "GELU(tmp1)" --> tmp2
-    tmp2 -- "Linear(tmp2)" --> tmp3
+graph TD
+    Input["Input: [28, 28, 192]"] -- "Linear(Input)" --> tmp1
+    tmp1["tmp1: [28, 28, 192]"] -- "GELU(tmp1)" --> tmp2
+    tmp2["tmp2: [28, 28, 192]"] -- "Linear(tmp2)" --> tmp3
     Input -- "Input + tmp3" --> Output
-    tmp3 -- "Input + tmp3" --> Output
+    tmp3["tmp3: [28, 28, 192]"] -- "Input + tmp3" --> Output["Output: [28, 28, 192]"]
+```
+
+```cpp
+template<typename T>
+void gelu(T* input, T* output, int batch){
+    for(int i = 0; i < batch; ++i){
+        output[i] = input[i] * 0.5 * (1 + tanh(sqrt(2/3.14159265359)*(input[i] + 0.044715 * input[x] * input[x] * input[x])));
+    }
+}
+
 ```
 
 
-
 ### Swin Block(Shift Window)
+
+
+### Control Stream
+
+```cpp
+typedef float data_t;
+
+int reg[32];
+data_t *param;
+data_t *input;
+data_t *output;
+void icu(istream& is){
+    int ins;
+    while(is >> ins){
+        switch(ins){
+            // 矩阵乘法规模96
+            case 0x11:
+
+            // 矩阵乘法规模49
+            case 0x12:
+
+            // 矩阵乘法规模32
+            case 0x13:
+
+            case 0x14:
+
+
+            default:
+
+        }
+    }
+}
+```
