@@ -1,6 +1,5 @@
 open_project project_hls
 set_top project_top
-add_files cyclic_shift.h
 add_files main.cpp
 add_files main.h
 add_files -tb main_tb.cpp

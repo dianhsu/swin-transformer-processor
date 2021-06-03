@@ -42,34 +42,6 @@ graph LR
 输入数据是一个 $H,W,C$ 的立方体，Unfolder Reshape的作用是将它切分成 $ds, ds, C$ 的小立方体。那么立方体的个数是$\frac{W \times H}{ds^2}$，将小立方体的数据排成一排。得到的输出就是$[\frac{W \times H}{ds^2}, ds^2 \times C ]$。
 
 这部分应该归并到数据选择上面(Data Selection)，数据选择是一个灵活性比较高的模块。由于这部分数据没有重叠，可以不考虑使用缓存。直接选择数据到下一个模块中就可以了。
-```cpp
-/**
- * @param input 输入数据基址
- * @param output 输出数据基址
- * @param sx 选择的数据的第一维的起点
- * @param sy 选择的数据的第二维的起点
- * @param sz 选择的数据的第三维的起点
- * @param lx 选择的数据的第一维的长度
- * @param ly 选择的数据的第二维的长度
- * @param lz 选择的数据的第三维的长度
- * @param h 输入数据的第一维
- * @param w 输入数据的第二维
- * @param c 输入数据的第三维
- * */
-template<typename T>
-void box_data_selection(T *input, T* output, int sx, int sy, int sz, int lx, int ly, int lz, int h, int w, int c){
-    for(int i = 0; i < lx; ++i){
-        for(int j = 0; j < ly; ++j){
-            for(int k = 0; k < lz; ++k){
-#pragma HLS pipeline
-                // output[i][j][k] = input[sx + i][sy + j][sz + k];
-                output[i * ly * lz + j * lz + k] = input[(sx + i) * w * c + (sy + j) * c + sz + k];
-            }
-        }
-    }
-}
-
-```
 
 #### Linear
 
@@ -84,7 +56,7 @@ graph LR
 
 这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$96$**。
 
-@import "code/main.cpp" {class="line-numbers"}
+@import "code/matrix_multiply.cpp" {class="line-numbers"}
 这部分的运算，直接固化在FPGA上面
 这样的话，Linear中调用Matrix Multiply的代码应该是这样子
 $$
@@ -255,6 +227,42 @@ graph TD
 
 ```
 
+```mermaid
+graph TD
+    subgraph 重复96次
+        Q
+        K
+        tmp
+        scale
+        tmp1
+        pp
+        tmp2
+        tmp3
+        tmp4
+        V
+    end
+    scale["scale: scalar"] -- "tmp * scale" --> tmp1
+    pp["Position Embedding: [49, 49]"] -- "Position Embedding + tmp1" --> tmp2
+    input["input: [28, 28, 192]"] -- "Linear(input)" --> TQ
+    TQ["TQ: [28, 28, 192]"] -- "data selection" --> Q
+    Q["Q: [49, 32]"] -- "Q x Kt" --> tmp
+    tmp["tmp: [49, 49]"] -- "tmp * scale" --> tmp1
+    tmp1["tmp1: [49, 49]"] -- "Position Embedding + tmp1" --> tmp2
+    tmp2["tmp2: [49, 49]"] -- "softmax(tmp2)" --> tmp3
+    input -- "Linear(input)" --> TK
+    TK["TK: [28, 28, 192]"] -- "data selection" --> K
+    K["K: [49, 32]"] -- "Q x Kt" --> tmp
+    input -- "Linear(input)" --> TV
+    
+    tmp3["tmp3: [49, 49]"] -- "tmp3 x tmpV" --> tmp4
+    V["V: [49, 32]"] -- "tmp3 x tmpV" --> tmp4
+    tmp4["tmp4: [49, 32]"] -- "data arrange" --> tmp5
+    tmp5["tmp5: [28, 28, 192]"] -- "tmp5 + input" --> tmp6
+    input -- "tmp5 + input" --> tmp6
+    tmp6["tmp6: [28, 28, 192]"] -- "Linear(tmp6)" --> Output
+    
+    TV["TV: [28, 28, 192]"] -- "data selection" --> V
+```
 Swin Transformer 中的 Window Attention有多个维度的矩阵乘法，可以使用多个模块来代替。 
 
 ###### Reshape :question:
@@ -311,15 +319,14 @@ graph TD
 template<typename T>
 void gelu(T* input, T* output, int batch){
     for(int i = 0; i < batch; ++i){
-        output[i] = input[i] * 0.5 * (1 + tanh(sqrt(2/3.14159265359)*(input[i] + 0.044715 * input[x] * input[x] * input[x])));
+        output[i] = input[i] * 0.5 * (1 + tanh(sqrt(2/3.14159265359)*
+            (input[i] + 0.044715 * input[x] * input[x] * input[x])));
     }
 }
 
 ```
 
-
 ### Swin Block(Shift Window)
-
 
 ### Control Stream
 

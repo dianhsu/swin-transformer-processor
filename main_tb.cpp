@@ -1,9 +1,9 @@
-#include "main.h"
-
+#include "linear.h"
+typedef float data_t;
 int main() {
-    int ip[10000];
-    data_t data[100000];
+    data_t it[10000];
+    data_t ot[100000];
     data_t param[100000];
-    project_top(ip, data, param);
+    linear<data_t, 96>(it, ot, param, 96, 96);
     return 0;
 }
