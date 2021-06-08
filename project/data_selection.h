@@ -29,6 +29,23 @@ void select_data(T* input, T* output,
         }
     }
 }
+template<typename T>
+void select_data_roll(T* input, T* output, 
+        int dim1, int dim2, int dim3, 
+        int sz1, int sz2, int sz3, 
+        int off1, int off2, int off3){
+    for(int i = 0; i < sz1; ++i){
+        for(int j = 0; j < sz2; ++j){
+            for(int k = 0; k < sz3; ++k){
+                output[i * sz2 * sz3 + j * sz3 + k] = input[
+                    (sz1 + off1 + dim1) % dim1 * dim2 * dim3 + 
+                    (sz2 + off2 + dim2) % dim2 * dim3 + 
+                    (sz3 + off3 + dim3) % dim3
+                ];
+            }
+        }
+    }
+}
 /**
  * @brief 将小矩阵安置到大矩阵中
  * @param input 输入地址的基址
