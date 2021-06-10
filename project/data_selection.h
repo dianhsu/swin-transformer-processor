@@ -29,6 +29,20 @@ void select_data(T* input, T* output,
         }
     }
 }
+/**
+ * @brief 从大矩阵中选择小矩阵，支持循环选择
+ * @param input 输入地址的基址
+ * @param output 输出地址的基址
+ * @param dim1 输入数据第一维大小
+ * @param dim2 输入数据第二维大小
+ * @param dim3 输入数据第三维大小
+ * @param sz1 选择的数据第一维大小
+ * @param sz2 选择的数据第二维大小
+ * @param sz3 选择的数据第三维大小
+ * @param off1 选择的数据第一维偏移量大小
+ * @param off2 选择的数据第二维偏移量大小
+ * @param off3 选择的数据第三维偏移量大小
+ * */
 template<typename T>
 void select_data_roll(T* input, T* output, 
         int dim1, int dim2, int dim3, 
