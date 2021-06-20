@@ -1,3 +1,5 @@
-project_hls/
+hls/project_hls/
 *.log
 .vscode/
+**/.idea/
+**/cmake-build-debug/
