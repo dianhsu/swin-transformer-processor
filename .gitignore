@@ -3,3 +3,4 @@ hls/project_hls/
 .vscode/
 **/.idea/
 **/cmake-build-debug/
+**/build/
