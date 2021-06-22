@@ -21,13 +21,13 @@ template<typename T>
 void control(std::istream &cIns, T *basePtr, std::istream &pIns) {
     unsigned c;
     while (cIns >> c) {
-        unsigned x;
+        unsigned x, y;
         switch (c) {
             case 0:
                 // 批量修改寄存器
-                cIns >> x;
-                for (unsigned i = 0; i < x; ++i) {
-                    cIns >> regs[i];
+                cIns >> x >> y;
+                for (unsigned i = 0; i < y; ++i) {
+                    cIns >> regs[x + i];
                 }
                 break;
             case 1:
