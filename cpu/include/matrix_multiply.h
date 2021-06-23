@@ -32,7 +32,7 @@ void matrix(std::istream &pIns) {
         }
     }
     for (int i = 0; i < C; ++i) {
-        basePtr[regs[14] + i] = localOutput[i];
+        basePtr[regs[14] + i] += localOutput[i];
     }
 }
 
