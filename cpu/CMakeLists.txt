@@ -3,10 +3,13 @@ cmake_minimum_required(VERSION 3.14)
 #set(CMAKE_C_COMPILER clang)
 #set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_HOME_DIRECTORY})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-project(STP )
-
+project(STP)
+file(GLOB SOURCE_FILES "src/*.cpp")
 include_directories(include)
+link_directories(lib)
+add_executable(main ${SOURCE_FILES})
+target_link_libraries(main yaml-cpp.a)
 
-add_executable(main main.cpp)
+add_executable(generate tools/generate.cpp)

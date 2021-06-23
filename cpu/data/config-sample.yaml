@@ -1,0 +1,24 @@
+commands:
+  - type: 0 # updateRegister
+    position: 9 # ds
+    value: 2
+  - type: 0 # updateRegister
+    position: 1 # regs[1]
+    value: 96
+  - type: 0 # updateRegister
+    position: 2
+    value: 56
+  - type: 0 # updateRegister
+    position: 3
+    value: 56
+  - type: 0 # updateRegister
+    position: 4
+    value: 192
+  - type: 0 # updateRegister
+    position: 5
+    value: 28
+  - type: 0 # updateRegister
+    position: 6
+    value: 28
+  - type: 1 # partitionMerge
+

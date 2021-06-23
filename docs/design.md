@@ -54,7 +54,7 @@ graph LR
 
 ##### Matrix Multiply
 
-这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的$ C $的大小是$96$**。
+这样的话，我们设定矩阵乘法中同时计算元素的数量是 $C$，**目前计划的 $C$ 的大小是 $96$ **。
 
 @import "code/matrix_multiply.cpp" {class="line-numbers"}
 这部分的运算，直接固化在FPGA上面
