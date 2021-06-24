@@ -21,6 +21,9 @@ const int64_t BATCH_SIZE = 96;
 template<typename T>
 void partition_merge(std::istream &pIns) {
     regs[7] = regs[4] * regs[5] * regs[6]; // local offset
+    regs[13] = regs[1]; // Main H
+    regs[14] = regs[2]; // Main X
+    regs[15] = regs[3]; // Main Y
     for (int64_t i = 0; i < regs[14]; i += regs[9]) {
         for (int64_t j = 0; j < regs[15]; j += regs[9]) {
 
@@ -60,7 +63,6 @@ void partition_merge(std::istream &pIns) {
             arrange_data<T>();
         }
     }
-
 }
 
 #endif //STP_PARTITION_MERGE_H

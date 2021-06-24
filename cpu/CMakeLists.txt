@@ -13,3 +13,4 @@ add_executable(main ${SOURCE_FILES})
 target_link_libraries(main yaml-cpp.a)
 
 add_executable(generate tools/generate.cpp)
+add_executable(generate_img tools/generate_img.cpp)

@@ -16,6 +16,10 @@ int main() {
     for (int i = 0; i < 300000000; ++i) {
         string tmp = to_string(dist(gen)) + "\n";
         ofs.write(tmp.c_str(), (long) tmp.length());
+        if ((i + 1) % 30000 == 0) {
+            printf("\rGenerated: [%.2f%%]", 100.0 * (i + 1) / (double) 300000000);
+            fflush(stdout);
+        }
     }
     ofs.close();
 }
