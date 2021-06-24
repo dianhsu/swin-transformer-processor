@@ -26,13 +26,17 @@
  * @note regs[16] 大立方体中小立方体第一维偏移量大小
  * @note regs[17] 大立方体中小立方体第二维偏移量大小
  * @note regs[18] 大立方体中小立方体第三维偏移量大小
- * @note regs[19] src原地址偏移量
- * @note regs[20] dst目标地址偏移量
+ * @note regs[19] 一级映射src原地址偏移量
+ * @note regs[20] 一级映射dst目标地址偏移量
  * @note regs[21] max stack used
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  * */
 
 int64_t regs[32];
 const int MAX_MEMORY_SIZE = 1024 * 1024 * 1024;
+
+#ifdef VERBOSE
+#define show_regs(x) std::cout << "regs[" << (x) << "]: " << regs[x]
+#endif
 
 #endif //STP_CONFIG_H

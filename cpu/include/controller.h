@@ -23,9 +23,32 @@ void control(const YAML::Node::iterator &st, const YAML::Node::iterator &ed, std
     for (auto ptr = st; ptr != ed; ++ptr) {
         const YAML::Node &command = *ptr;
         auto t = command["type"].as<int64_t>();
+#ifdef VERBOSE
+        std::cout << "command: [" << t << ": ";
+        switch (t) {
+            case 0:
+                std::cout << "updateRegister";
+                break;
+            case 1:
+                std::cout << "partitionMerge";
+                break;
+            case 2:
+                std::cout << "moveData";
+                break;
+            default:
+                std::cout << "unknown";
+                break;
+        }
+        std::cout << "]" << std::endl;
+#endif
         if (t == 0) {
             auto pos = command["position"].as<int64_t>();
             regs[pos] = command["value"].as<int64_t>();
+#ifdef VERBOSE2
+            std::cout << "\t";
+            show_regs(pos);
+            std::cout << std::endl;
+#endif
         } else if (t == 1) {
             regs[21] = regs[1] * regs[2] * regs[3] + regs[4] * regs[5] * regs[6];
             partition_merge<T>(pIns);

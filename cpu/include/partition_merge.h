@@ -37,15 +37,25 @@ void partition_merge(std::istream &pIns) {
             regs[17] = i;   // offset x
             regs[18] = j;   // offset y
             regs[19] = 0;   // src offset
-            regs[20] = regs[1] * regs[2] * regs[3] + regs[7]; // dst offset
+            regs[20] = regs[21]; // dst offset
             regs[21] += regs[1] * regs[9] * regs[9];    // max stack reserved
+#ifdef VERBOSE2
+            std::cout << "\tDATA SELECTION" << std::endl;
+            std::cout << "\t", show_regs(10), std::cout << std::endl;
+            std::cout << "\t", show_regs(11), std::cout << std::endl;
+            std::cout << "\t", show_regs(12), std::cout << std::endl;
+            std::cout << "\t", show_regs(19), std::cout << std::endl;
+            std::cout << "\t", show_regs(20), std::cout << std::endl;
+            std::cout << "\t", show_regs(21), std::cout << std::endl;
+#endif
             select_data<T>();
 
             regs[10] = regs[1] * regs[9] * regs[9]; // input dimension
             regs[11] = regs[1] * regs[9];   // output dimension
             regs[12] = BATCH_SIZE;  // batch size
             regs[19] = regs[20];    // src offset
-            regs[20] = regs[20] + regs[10] * regs[11] * regs[12];   // dst offset
+            regs[20] += regs[10];   // dst offset
+            //regs[21] = regs[20] + regs[11];
             linear<T>(pIns);
 
             regs[10] = regs[1]; // Inter H
