@@ -11,6 +11,8 @@
 
 #include "config.h"
 #include "partition_merge.h"
+#include "residual_attention.h"
+#include "residual_feed_forward.h"
 
 /**
  * 中央控制器
@@ -23,43 +25,32 @@ void control(const YAML::Node::iterator &st, const YAML::Node::iterator &ed, std
     for (auto ptr = st; ptr != ed; ++ptr) {
         const YAML::Node &command = *ptr;
         auto t = command["type"].as<int64_t>();
-#ifdef VERBOSE
-        std::cout << "command: [" << t << ": ";
-        switch (t) {
-            case 0:
-                std::cout << "updateRegister";
-                break;
-            case 1:
-                std::cout << "partitionMerge";
-                break;
-            case 2:
-                std::cout << "moveData";
-                break;
-            default:
-                std::cout << "unknown";
-                break;
-        }
-        std::cout << "]" << std::endl;
-#endif
         if (t == 0) {
             auto pos = command["position"].as<int64_t>();
             regs[pos] = command["value"].as<int64_t>();
-#ifdef VERBOSE2
-            std::cout << "\t";
-            show_regs(pos);
-            std::cout << std::endl;
-#endif
         } else if (t == 1) {
-            regs[21] = regs[1] * regs[2] * regs[3] + regs[4] * regs[5] * regs[6];
+            regs[7] = 0;
+            regs[8] = regs[1] * regs[2] * regs[3];
+            regs[9] = regs[8] + regs[4] * regs[5] * regs[6];
             partition_merge<T>(pIns);
         } else if (t == 2) {
-            // TODO: Move Data
             T *basePtr = reinterpret_cast<T *>(regs[0]);
             for (int64_t i = 0; i < regs[4] * regs[5] * regs[6]; ++i) {
-                basePtr[i] = basePtr[regs[7] + i];
+                basePtr[regs[7] + i] = basePtr[regs[8] + i];
             }
+            regs[1] = regs[4];
+            regs[2] = regs[5];
+            regs[3] = regs[6];
+            regs[9] = regs[1] * regs[2] * regs[3];
         } else if (t == 3) {
-            // TODO: Swin Block
+            // TODO: Residual Attention
+            regs[7] = 0;
+            regs[8] = regs[1] * regs[2] * regs[3];
+            regs[9] = regs[8] + regs[4] * regs[5] * regs[6];
+            residualAttention<T>(pIns);
+        } else if (t == 4) {
+            // TODO: Residual FeedForward
+            residualFeedForward(pIns);
         } else {
             return;
         }

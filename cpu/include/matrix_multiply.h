@@ -16,7 +16,7 @@ void matrix(std::istream &pIns) {
     T localOutput[C];
     T paramLocal[C][C];
     for (int i = 0; i < C; ++i) {
-        localInput[i] = basePtr[regs[13] + i];
+        localInput[i] = basePtr[regs[27] + i];
     }
     for (int i = 0; i < C; ++i) {
         for (int j = 0; j < C; ++j) {
@@ -32,7 +32,7 @@ void matrix(std::istream &pIns) {
         }
     }
     for (int i = 0; i < C; ++i) {
-        basePtr[regs[14] + i] += localOutput[i];
+        basePtr[regs[28] + i] += localOutput[i];
     }
 }
 

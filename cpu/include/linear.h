@@ -9,27 +9,19 @@
 
 template<typename T, int64_t C = 96>
 void linear(std::istream &pIns) {
-    int64_t rows = regs[10] / C;
-    int64_t cols = regs[11] / C;
+    //std::cout << __FUNCTION__ << ": " << regs[22] << " " << regs[23] << " " << regs[25] << " " << regs[26] << std::endl;
+    int64_t rows = regs[22] / C;
+    int64_t cols = regs[23] / C;
     T *basePtr = reinterpret_cast<T *>(regs[0]);
+    for (int i = 0; i < regs[23]; ++i) {
+        basePtr[regs[26] + i] = 0;
+    }
     for (int j = 0; j < cols; ++j) {
-        regs[13] = regs[19] + j * C;
-        regs[14] = regs[21];
-        regs[21] += C;
-
-        T *outputTmp = basePtr + regs[14];
-        for (int i = 0; i < C; ++i) {
-            outputTmp[i] = 0;
-        }
-
         for (int i = 0; i < rows; ++i) {
+            regs[27] = regs[25] + i * C;
+            regs[28] = regs[26] + j * C;
             matrix<T, C>(pIns);
         }
-
-        for (int i = 0; i < C; ++i) {
-            basePtr[regs[20] + j * C + i] = outputTmp[i];
-        }
-        regs[21] -= C;
     }
 }
 
