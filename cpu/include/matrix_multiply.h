@@ -36,4 +36,14 @@ void matrix(std::istream &pIns) {
     }
 }
 
+template<typename T, int n, int m, int k>
+void matrix_m() {
+
+}
+
+template<typename T, int n, int m, int k>
+void matrix_m_r() {
+
+}
+
 #endif //STP_MATRIX_MULTIPLY_H

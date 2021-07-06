@@ -44,15 +44,34 @@ void residualAttention(std::istream &pIns) {
     regs[14] = regs[29];
     regs[15] = regs[30];
     regs[16] = regs[31];
-    for (int64_t i = 0; i < regs[14]; i += regs[36]) {
+    regs[37] = regs[11] * regs[12] * regs[13];
+    for (int64_t i = 0; i < regs[14]; i += regs[11]) {
         for (int64_t j = 0; j < regs[15]; j += WINDOW_SIZE) {
             for (int64_t k = 0; k < regs[16]; k += WINDOW_SIZE) {
                 regs[21] = regs[9];
-                regs[9] += regs[11] * regs[12] * regs[13];
+                regs[20] = regs[33];
+                regs[17] = i;
+                regs[18] = j;
+                regs[19] = k;
+                regs[9] += regs[37];
                 select_data<T>();
 
+                regs[21] = regs[9];
+                regs[20] = regs[34];
+                regs[9] += regs[37];
+                select_data<T>();
+
+                regs[21] = regs[9];
+                regs[20] = regs[35];
+                regs[9] += regs[37];
+                select_data<T>();
+
+
+                regs[17] = i;
+                regs[18] = j;
+                regs[19] = k;
                 arrange_data<T>();
-                regs[9] -= regs[11] * regs[12] * regs[13];
+                regs[9] -= regs[37] * 3;
             }
         }
     }
