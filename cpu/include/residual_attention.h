@@ -6,10 +6,56 @@
 #define STP_RESIDUAL_ATTENTION_H
 
 #include <istream>
-
+#include "functions.h"
 #include "config.h"
 
 const int64_t WINDOW_SIZE = 7;
+
+template<typename T>
+void qkv(std::istream &pIns) {
+    regs[39] = regs[38] + regs[37];
+    regs[9] = regs[39] + regs[41] * regs[41];
+    T *basePtr = reinterpret_cast<T *>(regs[0]);
+    // K^T x Q
+    for (int i = 0; i < regs[41]; ++i) {
+        for (int j = 0; j < regs[41]; ++j) {
+            T tmp = 0;
+            for (int k = 0; k < regs[40]; ++k) {
+                tmp += basePtr[regs[34] + k * regs[41] + i] * basePtr[regs[33] + k * regs[41] + j];
+            }
+            basePtr[regs[39] + i * regs[41] + j] = tmp;
+        }
+    }
+    T scale;
+    pIns >> scale;
+    for (int i = 0; i < regs[41]; ++i) {
+        for (int j = 0; j < regs[41]; ++j) {
+            basePtr[regs[39] + i * regs[41] + j] *= scale;
+        }
+    }
+    T pe;
+    for (int i = 0; i < regs[41]; ++i) {
+        for (int j = 0; j < regs[41]; ++j) {
+            pIns >> pe;
+            basePtr[regs[39] + i * regs[41] + j] += pe;
+        }
+    }
+    regs[42] = regs[41];
+    for (int i = 0; i < regs[41]; ++i) {
+        regs[43] = regs[39] + i * regs[41];
+        softmax<T>();
+    }
+    for (int i = 0; i < regs[40]; ++i) {
+        for (int j = 0; j < regs[41]; ++j) {
+            T tmp = 0;
+            for (int k = 0; k < regs[41]; ++k) {
+                tmp += basePtr[regs[35] + i * regs[41] + k] * basePtr[regs[39] + k * regs[41] + j];
+            }
+            basePtr[regs[38] + i * regs[41] + j] = tmp;
+        }
+    }
+    regs[9] = regs[39];
+}
 
 template<typename T>
 void residualAttention(std::istream &pIns) {
@@ -65,13 +111,17 @@ void residualAttention(std::istream &pIns) {
                 regs[20] = regs[35];
                 regs[9] += regs[37];
                 select_data<T>();
-
+                regs[40] = regs[11];
+                regs[41] = WINDOW_SIZE * WINDOW_SIZE;
+                qkv<T>();
 
                 regs[17] = i;
                 regs[18] = j;
                 regs[19] = k;
+                regs[21] = regs[8];
+                regs[20] = regs[38];
                 arrange_data<T>();
-                regs[9] -= regs[37] * 3;
+                regs[9] -= regs[37] * 4;
             }
         }
     }

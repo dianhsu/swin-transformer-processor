@@ -76,20 +76,18 @@
  * @note regs[35] V offset
  * @note regs[36] Heads
  * @note regs[37] Cube size
- *
+ * @note regs[38] Result offset
+ * @note regs[39] Tmp offset
+ * @note regs[40] Q dim1
+ * @note regs[41] Q dim2
+ * @note regs[42] Softmax Batch
+ * @note regs[43] Softmax offset
  * ***********************************************************
  *
  * ===========================================================
  *
  * ***********************************************************
  *
- * @note regs[38] MatrixA Offset
- * @note regs[39] MatrixB Offset
- * @note regs[40] dim A 1
- * @note regs[41] dim A 2
- * @note regs[42] dim B 1
- * @note regs[43] dim B 2
- * @note regs[44] Target Offset
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  *
  * */
