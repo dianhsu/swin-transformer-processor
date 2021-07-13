@@ -19,4 +19,10 @@ void softmax() {
     }
 }
 
+template<typename T>
+T GELU(T x) {
+    return x * 0.5 * (1 + tanh(sqrt(2 / 3.14159265359) *
+                               (x + 0.044715 * x * x * x)));
+}
+
 #endif //STP_FUNCTIONS_H
