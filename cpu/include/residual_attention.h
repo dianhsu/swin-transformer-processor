@@ -113,7 +113,7 @@ void residualAttention(std::istream &pIns) {
                 select_data<T>();
                 regs[40] = regs[11];
                 regs[41] = WINDOW_SIZE * WINDOW_SIZE;
-                qkv<T>();
+                qkv<T>(pIns);
 
                 regs[17] = i;
                 regs[18] = j;

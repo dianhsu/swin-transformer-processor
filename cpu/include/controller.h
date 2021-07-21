@@ -43,14 +43,12 @@ void control(const YAML::Node::iterator &st, const YAML::Node::iterator &ed, std
             regs[3] = regs[6];
             regs[9] = regs[1] * regs[2] * regs[3];
         } else if (t == 3) {
-            // TODO: Residual Attention
             regs[7] = 0;
             regs[8] = regs[1] * regs[2] * regs[3];
             regs[9] = regs[8] + regs[4] * regs[5] * regs[6];
             residualAttention<T>(pIns);
         } else if (t == 4) {
-            // TODO: Residual FeedForward
-            residualFeedForward(pIns);
+            residualFeedForward<T>(pIns);
         } else {
             return;
         }
