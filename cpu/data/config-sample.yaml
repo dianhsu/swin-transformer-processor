@@ -20,6 +20,9 @@ commands:
   - type: 0 # updateRegister
     position: 6
     value: 28
+  - type: 0 # updateRegister
+    position: 55
+    value: 0
   - type: 1 # partitionMerge
 
   - type: 2 # moveData
@@ -36,7 +39,13 @@ commands:
   - type: 0 # updateRegister
     position: 10
     value: 0
+  - type: 0
+    position: 36
+    value: 6
   - type: 3 # residualAttention
+  - type: 0
+    position: 55
+    value: 1
   - type: 2 # moveData
   - type: 4 # residualFeedForward
   - type: 0
@@ -46,5 +55,7 @@ commands:
   - type: 3 # residualAttention
   - type: 2 # moveData
   - type: 4 # residualFeedForward
-
+  - type: 0
+    position: 55
+    value: 0
 

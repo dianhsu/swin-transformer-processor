@@ -76,12 +76,23 @@
  * @note regs[35] V offset
  * @note regs[36] Heads
  * @note regs[37] Cube size
+ *
  * @note regs[38] Result offset
  * @note regs[39] Tmp offset
+ *
  * @note regs[40] Q dim1
  * @note regs[41] Q dim2
+ *
+ * @note regs[44] TQ offset
+ * @note regs[45] TK offset
+ * @note regs[46] TV offset
+ * @note regs[47] tmp1 offset
+ * @note regs[48] tmp2 offset
+ * @note regs[49] tmp3 offset
+ *
  * @note regs[42] Softmax Batch
- * @note regs[43] Softmax offset
+ * @note regs[43] Softmax Input offset
+ * @note regs[54] Softmax Output offset
  * ***********************************************************
  *
  * ===========================================================
@@ -92,11 +103,12 @@
  * @note regs[52] tmp2 Offset
  * @note regs[53] tmp3 Offset
  *
+ * @note regs[55] move data add
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  *
  * */
 
-int64_t regs[100];
+int64_t regs[60];
 const int MAX_MEMORY_SIZE = 1024 * 1024 * 1024;
 
 #ifdef VERBOSE

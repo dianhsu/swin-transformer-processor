@@ -15,7 +15,7 @@ void softmax() {
         sum += exp(basePtr[regs[43] + i]);
     }
     for (int i = 0; i < regs[42]; ++i) {
-        basePtr[regs[43] + i] = exp(basePtr[regs[43] + i]) / sum;
+        basePtr[regs[54] + i] = exp(basePtr[regs[43] + i]) / sum;
     }
 }
 

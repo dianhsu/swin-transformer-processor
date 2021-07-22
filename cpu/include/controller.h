@@ -35,8 +35,14 @@ void control(const YAML::Node::iterator &st, const YAML::Node::iterator &ed, std
             partition_merge<T>(pIns);
         } else if (t == 2) {
             T *basePtr = reinterpret_cast<T *>(regs[0]);
-            for (int64_t i = 0; i < regs[4] * regs[5] * regs[6]; ++i) {
-                basePtr[regs[7] + i] = basePtr[regs[8] + i];
+            if(regs[55]){
+                for (int64_t i = 0; i < regs[4] * regs[5] * regs[6]; ++i) {
+                    basePtr[regs[7] + i] += basePtr[regs[8] + i];
+                }
+            }else{
+                for (int64_t i = 0; i < regs[4] * regs[5] * regs[6]; ++i) {
+                    basePtr[regs[7] + i] = basePtr[regs[8] + i];
+                }
             }
             regs[1] = regs[4];
             regs[2] = regs[5];
