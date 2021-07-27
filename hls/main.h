@@ -1,9 +1,9 @@
-#ifndef __SWIN_MAIN_H__
-#define __SWIN_MAIN_H__
-
-typedef float data_t;
+#include "controller.h"
 
 
-void project_top(int* ip, data_t* data, data_t* param);
-
-#endif //__SWIN_MAIN_H__
+/**
+ * @param basePtr 内存绝对基址
+ * @param cIns 控制流
+ * @param pIns 参数流
+ * */
+void project_top(data_t* basePtr, ptr_stream& cIns, param_stream& pIns);
