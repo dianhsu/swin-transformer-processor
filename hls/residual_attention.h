@@ -12,8 +12,7 @@
 const int64_t WINDOW_SIZE = 7;
 
 template<typename T>
-void qkv(param_stream& pIns) {
-    T* basePtr = (T*) (regs[0]);
+void qkv(T* basePtr,param_stream& pIns) {
     // K^T x Q
     for (ptr_t i = 0; i < regs[41]; ++i) {
         for (ptr_t j = 0; j < regs[41]; ++j) {
@@ -39,9 +38,10 @@ void qkv(param_stream& pIns) {
     // tmp2 -> tmp3
     regs[42] = regs[41];
     for (ptr_t i = 0; i < regs[41]; ++i) {
+#pragma HLS pipeline off
         regs[43] = regs[48] + i * regs[41];
         regs[54] = regs[49] + i * regs[41];
-        softmax<T>();
+        softmax<T>(basePtr);
     }
     // tmp3 -> result
     for (ptr_t i = 0; i < regs[40]; ++i) {
@@ -56,7 +56,7 @@ void qkv(param_stream& pIns) {
 }
 
 template<typename T>
-void residualAttention(param_stream& pIns) {
+void residualAttention(T* basePtr,param_stream& pIns) {
     regs[29] = regs[1];
     regs[30] = regs[2];
     regs[31] = regs[3];
@@ -76,13 +76,13 @@ void residualAttention(param_stream& pIns) {
     regs[25] = 0;
 
     regs[26] = regs[33];
-    linear<T>(pIns);
+    linear<T>(basePtr,pIns);
 
     regs[26] = regs[34];
-    linear<T>(pIns);
+    linear<T>(basePtr,pIns);
 
     regs[26] = regs[35];
-    linear<T>(pIns);
+    linear<T>(basePtr, pIns);
 
     regs[11] = regs[29] / regs[36];
     regs[12] = WINDOW_SIZE;
@@ -122,24 +122,24 @@ void residualAttention(param_stream& pIns) {
 
                 regs[21] = regs[9];
                 regs[20] = regs[44];
-                select_data<T>();
+                select_data<T>(basePtr);
 
                 regs[21] = regs[9];
                 regs[20] = regs[45];
-                select_data<T>();
+                select_data<T>(basePtr);
 
                 regs[21] = regs[9];
                 regs[20] = regs[46];
-                select_data<T>();
+                select_data<T>(basePtr);
 
-                qkv<T>(pIns);
+                qkv<T>(basePtr, pIns);
 
                 regs[17] = i;
                 regs[18] = j;
                 regs[19] = k;
                 regs[21] = regs[8];
                 regs[20] = regs[38];
-                arrange_data<T>();
+                arrange_data<T>(basePtr);
 
             }
         }

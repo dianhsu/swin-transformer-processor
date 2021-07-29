@@ -20,7 +20,7 @@ const ptr_t DOWN_SCALE = 2;
  * @param pIns 参数流
  */
 template<typename T>
-void partition_merge(param_stream& pIns) {
+void partition_merge(T* basePtr, param_stream& pIns) {
 
     for (ptr_t i = 0; i < regs[2]; i += DOWN_SCALE) {
         for (ptr_t j = 0; j < regs[3]; j += DOWN_SCALE) {
@@ -37,7 +37,7 @@ void partition_merge(param_stream& pIns) {
             regs[20] = 0;   // src offset
             regs[21] = regs[9]; // dst offset
             regs[9] += regs[11] * DOWN_SCALE * DOWN_SCALE;    // max stack reserved
-            select_data<T>();
+            select_data<T>(basePtr);
 
             regs[22] = regs[11] * regs[12] * regs[13]; // input dimension
             regs[23] = regs[11] * regs[12];   // output dimension
@@ -45,7 +45,7 @@ void partition_merge(param_stream& pIns) {
             regs[25] = regs[21];    // src offset
             regs[26] = regs[25] + regs[22];   // dst offset
             regs[9] += regs[23]; // max stack reserved
-            linear<T>(pIns);
+            linear<T>(basePtr, pIns);
 
             regs[11] = regs[23]; // Inter H
             regs[12] = 1; // Inter X
@@ -61,7 +61,7 @@ void partition_merge(param_stream& pIns) {
 
             regs[9] -= regs[22];
             regs[9] -= regs[23];
-            arrange_data<T>();
+            arrange_data<T>(basePtr);
         }
     }
 }

@@ -5,9 +5,9 @@
 #ifndef STP_CONFIG_H
 #define STP_CONFIG_H
 
-#include <cmath>
-#include <algorithm>
 
+#include "hls_math.h"
+#include "ap_fixed.h"
 #include "hls_stream.h"
 /**
  * ===========================================================
@@ -111,11 +111,12 @@
  *
  * */
 // 处理参数类型
-typedef float data_t;
+typedef ap_fixed<8, 4, AP_RND, AP_SAT> data_t;
+//typedef float data_t;
 // 寄存器位宽
 typedef unsigned long long ptr_t;
-hls::stream<ptr_t> ptr_stream;
-hls::stream<data_t> param_stream;
+typedef hls::stream<ptr_t> ptr_stream;
+typedef hls::stream<data_t> param_stream;
 ptr_t regs[60];
 
 #endif //STP_CONFIG_H

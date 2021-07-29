@@ -19,9 +19,10 @@
  * @param pIns 参数流
  */
 template<typename T>
-void control(ptr_stream& cIns, param_stream& pIns) {
+void control(T* basePtr, ptr_stream& cIns, param_stream& pIns) {
     ptr_t t;
-    while (cIns >> t) {
+    while (1) {
+	cIns >> t;
         if (t == 0) {
             ptr_t pos;
             cIns >> pos;
@@ -30,11 +31,11 @@ void control(ptr_stream& cIns, param_stream& pIns) {
             regs[7] = 0;
             regs[8] = regs[1] * regs[2] * regs[3];
             regs[9] = regs[8] + regs[4] * regs[5] * regs[6];
-            partition_merge<T>(pIns);
+            partition_merge<T>(basePtr, pIns);
         } else if (t == 2) {
-            T* basePtr = reinterpret_cast<T*>(regs[0]);
             if (regs[55]) {
                 for (ptr_t i = 0; i < regs[4] * regs[5] * regs[6]; ++i) {
+#pragma HLS pipeline off
                     basePtr[regs[7] + i] += basePtr[regs[8] + i];
                 }
             } else {
@@ -50,9 +51,9 @@ void control(ptr_stream& cIns, param_stream& pIns) {
             regs[7] = 0;
             regs[8] = regs[1] * regs[2] * regs[3];
             regs[9] = regs[8] + regs[4] * regs[5] * regs[6];
-            residualAttention<T>(pIns);
+            residualAttention<T>(basePtr, pIns);
         } else if (t == 4) {
-            residualFeedForward<T>(pIns);
+            residualFeedForward<T>(basePtr, pIns);
         } else {
             return;
         }

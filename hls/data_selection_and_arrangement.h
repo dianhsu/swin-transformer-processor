@@ -23,8 +23,7 @@
  * @note regs[21] dst目标地址偏移量
  * */
 template<typename T>
-void select_data() {
-    T* basePtr = reinterpret_cast<T *>(regs[0]);
+void select_data(T* basePtr) {
     for (ptr_t i = 0; i < regs[11]; ++i) {
         for (ptr_t j = 0; j < regs[12]; ++j) {
             for (ptr_t k = 0; k < regs[13]; ++k) {
@@ -54,8 +53,7 @@ void select_data() {
  * @note regs[21] dst目标地址偏移量
  * * */
 template<typename T>
-void select_data_roll() {
-    auto basePtr = reinterpret_cast<T *>(regs[0]);
+void select_data_roll(T* basePtr) {
     for (int i = 0; i < regs[11]; ++i) {
         for (int j = 0; j < regs[12]; ++j) {
             for (int k = 0; k < regs[13]; ++k) {
@@ -85,8 +83,7 @@ void select_data_roll() {
  * @note regs[21] dst目标地址偏移量
  * */
 template<typename T>
-void arrange_data() {
-    auto basePtr = reinterpret_cast<T *>(regs[0]);
+void arrange_data(T* basePtr) {
     for (int i = 0; i < regs[11]; ++i) {
         for (int j = 0; j < regs[12]; ++j) {
             for (int k = 0; k < regs[13]; ++k) {
@@ -119,8 +116,7 @@ void arrange_data() {
  * @note regs[21] dst目标地址偏移量
  * * */
 template<typename T>
-[[maybe_unused]] void arrange_data_roll() {
-    auto basePtr = reinterpret_cast<T *>(regs[0]);
+[[maybe_unused]] void arrange_data_roll(T* basePtr) {
     for (int i = 0; i < regs[11]; ++i) {
         for (int j = 0; j < regs[12]; ++j) {
             for (int k = 0; k < regs[13]; ++k) {
