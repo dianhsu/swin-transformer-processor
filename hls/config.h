@@ -111,8 +111,8 @@
  *
  * */
 // 处理参数类型
-typedef ap_fixed<8, 4, AP_RND, AP_SAT> data_t;
-//typedef float data_t;
+//typedef ap_fixed<8, 4, AP_RND, AP_SAT> data_t;
+typedef float data_t;
 // 寄存器位宽
 typedef unsigned long long ptr_t;
 typedef hls::stream<ptr_t> ptr_stream;

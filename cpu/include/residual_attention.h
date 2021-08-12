@@ -62,16 +62,128 @@ void residualAttention(std::istream &pIns) {
     regs[31] = regs[3];
     regs[32] = regs[29] * regs[30] * regs[31];
 
-    regs[33] = regs[9];
-    regs[9] += regs[32];
-    regs[34] = regs[9];
-    regs[9] += regs[32];
-    regs[35] = regs[9];
-    regs[9] += regs[32];
 
+
+//    regs[33] = regs[9];
+//    regs[9] += regs[32];
+//    regs[34] = regs[9];
+//    regs[9] += regs[32];
+//    regs[35] = regs[9];
+//    regs[9] += regs[32];
+
+
+    regs[40] = regs[29] / regs[36];
+    regs[41] = WINDOW_SIZE * WINDOW_SIZE;
+
+    regs[37] = regs[40] * regs[41];
+
+    regs[33] = regs[9];
+    regs[9] += regs[37];
+    regs[34] = regs[9];
+    regs[9] += regs[37];
+    regs[35] = regs[9];
+    regs[9] += regs[37];
+
+    regs[56] = regs[9];
+    regs[9] += regs[29];
+
+    regs[57] = regs[9];
+    regs[9] += WINDOW_SIZE * WINDOW_SIZE * regs[29];
+
+    regs[58] = regs[9];
+    regs[9] += WINDOW_SIZE * WINDOW_SIZE * regs[29];
+
+    regs[59] = regs[9];
+    regs[9] += WINDOW_SIZE * WINDOW_SIZE * regs[29];
+
+    regs[60] = regs[9];
+    regs[9] += regs[29];
+
+    regs[61] = regs[9];
+    regs[9] += regs[29];
+
+    regs[62] = regs[9];
+    regs[9] += regs[29];
+
+    /***********************************************/
+    for (int64_t j = 0; j < regs[30]; j += WINDOW_SIZE) {
+        for (int64_t k = 0; k < regs[31]; k += WINDOW_SIZE) {
+            regs[11] = regs[29];
+            regs[12] = 1;
+            regs[13] = 1;
+            regs[14] = regs[29];
+            regs[15] = regs[30];
+            regs[16] = regs[31];
+
+
+            for (int64_t j1 = 0; j1 < WINDOW_SIZE; ++j1) {
+                for (int64_t k1 = 0; k1 < WINDOW_SIZE; ++k1) {
+                    regs[17] = 0;
+                    regs[18] = j1 + j;
+                    regs[19] = k1 + k;
+                    regs[20] = 0;
+                    regs[21] = regs[56];
+
+                    select_data<T>();
+                    regs[22] = regs[29];
+                    regs[23] = regs[29];
+                    regs[24] = 96;
+                    regs[25] = regs[56];
+
+                    regs[26] = regs[60];
+                    linear<T>(pIns);
+
+                    regs[26] = regs[61];
+                    linear<T>(pIns);
+
+                    regs[26] = regs[62];
+                    linear<T>(pIns);
+
+                    regs[17] = 0;
+                    regs[18] = j1;
+                    regs[19] = k1;
+                    regs[20] = regs[60];
+
+                    regs[21] = regs[57];
+                    arrange_data<T>();
+
+                    regs[21] = regs[58];
+                    arrange_data<T>();
+
+                    regs[21] = regs[59];
+                    arrange_data<T>();
+                }
+            }
+            regs[11] = regs[40];
+            regs[12] = WINDOW_SIZE;
+            regs[13] = WINDOW_SIZE;
+            regs[14] = regs[29];
+            regs[15] = WINDOW_SIZE;
+            regs[16] = WINDOW_SIZE;
+
+            for (int64_t i = 0; i < regs[29]; i += regs[40]) {
+                regs[17] = i;
+                regs[18] = 0;
+                regs[19] = 0;
+                regs[20] = regs[57];
+                regs[21] = regs[33];
+                select_data<T>();
+                regs[20] = regs[58];
+                regs[21] = regs[34];
+                select_data<T>();
+                regs[20] = regs[59];
+                regs[21] = regs[35];
+                select_data<T>();
+
+                qkv<T>(pIns);
+
+                arrange_data<T>();
+            }
+        }
+    }
+    /***********************************************/
     regs[22] = regs[32];
     regs[23] = regs[32];
-
     regs[24] = 96;
     regs[25] = 0;
 
