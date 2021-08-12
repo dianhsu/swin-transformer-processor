@@ -101,6 +101,9 @@
  * @note regs[52] tmp2 Offset
  * @note regs[53] tmp3 Offset
  *
+ * @note regs[63] linear_ins_offset
+ * @note regs[64] linear_ots_offset
+ *
  * @note regs[55] move data add or overlay
  *
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。

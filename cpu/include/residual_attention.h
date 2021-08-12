@@ -177,85 +177,91 @@ void residualAttention(std::istream &pIns) {
 
                 qkv<T>(pIns);
 
+                regs[17] = i;
+                regs[18] = j;
+                regs[19] = k;
+                regs[20] = regs[38];
+                regs[21] = regs[8];
+
                 arrange_data<T>();
             }
         }
     }
     /***********************************************/
-    regs[22] = regs[32];
-    regs[23] = regs[32];
-    regs[24] = 96;
-    regs[25] = 0;
-
-    regs[26] = regs[33];
-    linear<T>(pIns);
-
-    regs[26] = regs[34];
-    linear<T>(pIns);
-
-    regs[26] = regs[35];
-    linear<T>(pIns);
-
-    regs[11] = regs[29] / regs[36];
-    regs[12] = WINDOW_SIZE;
-    regs[13] = WINDOW_SIZE;
-    regs[14] = regs[29];
-    regs[15] = regs[30];
-    regs[16] = regs[31];
-    regs[37] = regs[11] * regs[12] * regs[13];
-
-    regs[44] = regs[9];
-    regs[9] += regs[37];
-    regs[45] = regs[9];
-    regs[9] += regs[37];
-    regs[46] = regs[9];
-    regs[9] += regs[37];
-
-    regs[40] = regs[11];
-    regs[41] = WINDOW_SIZE * WINDOW_SIZE;
-
-    regs[38] = regs[9]; // result
-    regs[9] += regs[37];
-    regs[39] = regs[9]; // tmp
-    regs[9] += regs[41] * regs[41];
-    regs[47] = regs[9]; // tmp1
-    regs[9] += regs[41] * regs[41];
-    regs[48] = regs[9]; // tmp2
-    regs[9] += regs[41] * regs[41];
-    regs[49] = regs[9];
-    regs[9] += regs[41] * regs[41];
-
-    for (int64_t i = 0; i < regs[14]; i += regs[11]) {
-        for (int64_t j = 0; j < regs[15]; j += WINDOW_SIZE) {
-            for (int64_t k = 0; k < regs[16]; k += WINDOW_SIZE) {
-                regs[17] = i;
-                regs[18] = j;
-                regs[19] = k;
-
-                regs[21] = regs[9];
-                regs[20] = regs[44];
-                select_data<T>();
-
-                regs[21] = regs[9];
-                regs[20] = regs[45];
-                select_data<T>();
-
-                regs[21] = regs[9];
-                regs[20] = regs[46];
-                select_data<T>();
-
-                qkv<T>(pIns);
-
-                regs[17] = i;
-                regs[18] = j;
-                regs[19] = k;
-                regs[21] = regs[8];
-                regs[20] = regs[38];
-                arrange_data<T>();
-
-            }
-        }
-    }
+//    regs[22] = regs[32];
+//    regs[23] = regs[32];
+//    regs[24] = 96;
+//    regs[25] = 0;
+//
+//    regs[26] = regs[33];
+//    linear<T>(pIns);
+//
+//    regs[26] = regs[34];
+//    linear<T>(pIns);
+//
+//    regs[26] = regs[35];
+//    linear<T>(pIns);
+//
+//    regs[11] = regs[29] / regs[36];
+//    regs[12] = WINDOW_SIZE;
+//    regs[13] = WINDOW_SIZE;
+//    regs[14] = regs[29];
+//    regs[15] = regs[30];
+//    regs[16] = regs[31];
+//    regs[37] = regs[11] * regs[12] * regs[13];
+//
+//    regs[44] = regs[9];
+//    regs[9] += regs[37];
+//    regs[45] = regs[9];
+//    regs[9] += regs[37];
+//    regs[46] = regs[9];
+//    regs[9] += regs[37];
+//
+//    regs[40] = regs[11];
+//    regs[41] = WINDOW_SIZE * WINDOW_SIZE;
+//
+//    regs[38] = regs[9]; // result
+//    regs[9] += regs[37];
+//    regs[39] = regs[9]; // tmp
+//    regs[9] += regs[41] * regs[41];
+//    regs[47] = regs[9]; // tmp1
+//    regs[9] += regs[41] * regs[41];
+//    regs[48] = regs[9]; // tmp2
+//    regs[9] += regs[41] * regs[41];
+//    regs[49] = regs[9];
+//    regs[9] += regs[41] * regs[41];
+//
+//    for (int64_t i = 0; i < regs[14]; i += regs[11]) {
+//        for (int64_t j = 0; j < regs[15]; j += WINDOW_SIZE) {
+//            for (int64_t k = 0; k < regs[16]; k += WINDOW_SIZE) {
+//                regs[17] = i;
+//                regs[18] = j;
+//                regs[19] = k;
+//
+//                regs[21] = regs[9];
+//                regs[20] = regs[44];
+//                select_data<T>();
+//
+//                regs[21] = regs[9];
+//                regs[20] = regs[45];
+//                select_data<T>();
+//
+//                regs[21] = regs[9];
+//                regs[20] = regs[46];
+//                select_data<T>();
+//
+//                qkv<T>(pIns);
+//
+//                regs[17] = i;
+//                regs[18] = j;
+//                regs[19] = k;
+//                regs[21] = regs[8];
+//                regs[20] = regs[38];
+//                arrange_data<T>();
+//
+//            }
+//        }
+//    }
     regs[9] = regs[33];
 }
 
