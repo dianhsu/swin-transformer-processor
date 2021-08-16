@@ -110,13 +110,13 @@
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  *
  * */
-// 处理参数类型
-//typedef ap_fixed<8, 4, AP_RND, AP_SAT> data_t;
-typedef float data_t;
+ // 处理参数类型
+typedef ap_fixed<8, 4, AP_RND, AP_SAT> data_t;
+//typedef float data_t;
 // 寄存器位宽
 typedef unsigned long long ptr_t;
 typedef hls::stream<ptr_t> ptr_stream;
 typedef hls::stream<data_t> param_stream;
-ptr_t regs[60];
+ptr_t regs[70];
 
 #endif //STP_CONFIG_H
