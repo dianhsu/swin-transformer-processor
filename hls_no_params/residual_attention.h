@@ -25,14 +25,14 @@ void qkv(T* basePtr, param_stream& pIns) {
     }
     // tmp -> tmp1
     T scale;
-    pIns >> scale;
+    //pIns >> scale;
     for (ptr_t i = 0; i < regs[37]; ++i) {
         basePtr[regs[47] + i] = basePtr[regs[39] + i] * scale;
     }
     // tmp1 -> tmp2
     T position_encoding;
     for (ptr_t i = 0; i < regs[37]; ++i) {
-        pIns >> position_encoding;
+        //pIns >> position_encoding;
         basePtr[regs[48] + i] = basePtr[regs[47] + i] + position_encoding;
     }
     // tmp2 -> tmp3
