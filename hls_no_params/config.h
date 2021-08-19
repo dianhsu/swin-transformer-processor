@@ -10,9 +10,8 @@
 #include "ap_fixed.h"
 #include "hls_stream.h"
 /**
- * ===========================================================
- *
- * ******************** basic level **************************
+ * ***********************************************************
+ * @section basic level
  *
  * @note regs[0] basePtr，不可修改，也是输出存放的地址
  * @note regs[1] 输入立方体第一维大小，二级映射不可修改
@@ -27,9 +26,7 @@
  *
  * ***********************************************************
  *
- * ===========================================================
- *
- * *************data selection and data arrangement***********
+ * @section  data selection and data arrangement
  *
  * @note regs[10] shift大小，swin block偏移量，二级映射不可修改
  * @note regs[11] 小立方体第一维大小；
@@ -46,9 +43,7 @@
  *
  * ***********************************************************
  *
- * ===========================================================
- *
- * ************************* Linear **************************
+ * @section Linear
  *
  * @note regs[22] Linear输入维度
  * @note regs[23] Linear输出维度
@@ -58,22 +53,19 @@
  *
  * ***********************************************************
  *
- * ===========================================================
- *
- * ******************* Matrix Param Multiply *****************
+ * @section Matrix Param Multiply
  *
  * @note regs[27] src基址偏移量
  * @note regs[28] dst基址偏移量
  *
  * ***********************************************************
+ * @section Attention
  *
- * ===========================================================
- *
- * ************************* Q K V ***************************
  * @note regs[29] dim1
  * @note regs[30] dim2
  * @note regs[31] dim3
  * @note regs[32] sz
+ *
  * @note regs[33] Q offset
  * @note regs[34] K offset
  * @note regs[35] V offset
@@ -96,17 +88,31 @@
  * @note regs[42] Softmax Batch
  * @note regs[43] Softmax Input offset
  * @note regs[54] Softmax Output offset
+ * @note regs[56] 1height offset
+ * @note regs[57] QHeight Offset
+ * @note regs[58] KHeight Offset
+ * @note regs[59] VHeight Offset
+ * @note regs[60] 1Qheight result
+ * @note regs[61] 1Kheight result
+ * @note regs[62] 1Vheight result
  * ***********************************************************
  *
- * ===========================================================
+ * @section Feed Forward
  *
- * ***********************************************************
  * @note regs[50] sz
  * @note regs[51] tmp1 Offset
  * @note regs[52] tmp2 Offset
  * @note regs[53] tmp3 Offset
  *
- * @note regs[55] move data add
+ * @note regs[63] linear_ins_offset
+ * @note regs[64] linear_ots_offset
+ *
+ * @note regs[55] move data add or overlay
+ *
+ * @section Layer Normalization
+ *
+ * @note regs[65] src offset
+ * @note regs[66] dst offset
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  *
  * */

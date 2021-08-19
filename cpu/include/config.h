@@ -106,6 +106,10 @@
  *
  * @note regs[55] move data add or overlay
  *
+ * @section Layer Normalization
+ *
+ * @note regs[65] src offset
+ * @note regs[66] dst offset
  * @note 所有偏移量的表示，都是单个数据作为单位，不考虑数据在内存中实际所占用的存储空间。
  *
  * */

@@ -24,4 +24,22 @@ T GELU(T x) {
         (T) (x + (T) 0.044715 * x * x * x)));
 }
 
+template<typename T, ptr_t C = 96>
+void layer_norm(T* basePtr) {
+    T sum = 0;
+    T sum2 = 0;
+    T eps = 0.0001;
+    T gamma = 0;
+    T beta = 0;
+    for (ptr_t i = 0; i < C; ++i) {
+        sum += basePtr[i + regs[65]];
+        sum2 += basePtr[i + regs[65]] * basePtr[i + regs[65]];
+    }
+    T avg = sum / C, avg2 = sum2 / C;
+    T varx = avg2 - avg * avg;
+    for (int j = 0; j < C; ++j) {
+        basePtr[i + regs[66]] = (basePtr[i + regs[65]] - avg) / sqrt(varx + eps) * gamma + beta;
+    }
+}
+
 #endif //STP_FUNCTIONS_H
