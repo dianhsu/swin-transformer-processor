@@ -38,7 +38,7 @@ void layer_norm(T* basePtr) {
     T avg = sum / C, avg2 = sum2 / C;
     T varx = avg2 - avg * avg;
     for (int j = 0; j < C; ++j) {
-        basePtr[i + regs[66]] = (basePtr[i + regs[65]] - avg) / sqrt(varx + eps) * gamma + beta;
+        basePtr[j + regs[66]] = (basePtr[j + regs[65]] - avg) / sqrt(varx + eps) * gamma + beta;
     }
 }
 
