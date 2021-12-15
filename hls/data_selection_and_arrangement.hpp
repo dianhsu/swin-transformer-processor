@@ -5,7 +5,7 @@
 #ifndef STP_DATA_SELECTION_AND_ARRANGEMENT_H
 #define STP_DATA_SELECTION_AND_ARRANGEMENT_H
 
-#include "config.h"
+#include "config.hpp"
 
 /**
  * @brief 从大矩阵中选择小矩阵
@@ -22,19 +22,16 @@
  * @note regs[20] src原地址偏移量
  * @note regs[21] dst目标地址偏移量
  * */
-template<typename T>
-void select_data(T* basePtr) {
-    for (ptr_t i = 0; i < regs[11]; ++i) {
-        for (ptr_t j = 0; j < regs[12]; ++j) {
-            for (ptr_t k = 0; k < regs[13]; ++k) {
-                basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[21]] = basePtr[
-                        (i + regs[17]) * regs[15] * regs[16] +
-                        (j + regs[18]) * regs[16] +
-                        (k + regs[19]) +
-                        regs[20]];
-            }
-        }
+template <typename T> void select_data(T *basePtr) {
+  for (ptr_t i = 0; i < regs[11]; ++i) {
+    for (ptr_t j = 0; j < regs[12]; ++j) {
+      for (ptr_t k = 0; k < regs[13]; ++k) {
+        basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[21]] =
+            basePtr[(i + regs[17]) * regs[15] * regs[16] +
+                    (j + regs[18]) * regs[16] + (k + regs[19]) + regs[20]];
+      }
     }
+  }
 }
 
 /**
@@ -52,19 +49,17 @@ void select_data(T* basePtr) {
  * @note regs[20] src原地址偏移量
  * @note regs[21] dst目标地址偏移量
  * * */
-template<typename T>
-void select_data_roll(T* basePtr) {
-    for (int i = 0; i < regs[11]; ++i) {
-        for (int j = 0; j < regs[12]; ++j) {
-            for (int k = 0; k < regs[13]; ++k) {
-                basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[21]] = basePtr[
-                        (i + regs[17]) % regs[11] * regs[15] * regs[16] +
-                        (j + regs[18]) % regs[12] * regs[16] +
-                        (k + regs[19]) % regs[13] +
-                        regs[20]];
-            }
-        }
+template <typename T> void select_data_roll(T *basePtr) {
+  for (int i = 0; i < regs[11]; ++i) {
+    for (int j = 0; j < regs[12]; ++j) {
+      for (int k = 0; k < regs[13]; ++k) {
+        basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[21]] =
+            basePtr[(i + regs[17]) % regs[11] * regs[15] * regs[16] +
+                    (j + regs[18]) % regs[12] * regs[16] +
+                    (k + regs[19]) % regs[13] + regs[20]];
+      }
     }
+  }
 }
 
 /**
@@ -82,20 +77,16 @@ void select_data_roll(T* basePtr) {
  * @note regs[20] src原地址偏移量
  * @note regs[21] dst目标地址偏移量
  * */
-template<typename T>
-void arrange_data(T* basePtr) {
-    for (int i = 0; i < regs[11]; ++i) {
-        for (int j = 0; j < regs[12]; ++j) {
-            for (int k = 0; k < regs[13]; ++k) {
-                basePtr[
-                        (i + regs[17]) * regs[15] * regs[16] +
-                        (j + regs[18]) * regs[16] +
-                        (k + regs[19]) +
-                        regs[21]
-                ] = basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[20]];
-            }
-        }
+template <typename T> void arrange_data(T *basePtr) {
+  for (int i = 0; i < regs[11]; ++i) {
+    for (int j = 0; j < regs[12]; ++j) {
+      for (int k = 0; k < regs[13]; ++k) {
+        basePtr[(i + regs[17]) * regs[15] * regs[16] +
+                (j + regs[18]) * regs[16] + (k + regs[19]) + regs[21]] =
+            basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[20]];
+      }
     }
+  }
 }
 
 /**
@@ -115,20 +106,17 @@ void arrange_data(T* basePtr) {
  * @note regs[20] src原地址偏移量
  * @note regs[21] dst目标地址偏移量
  * * */
-template<typename T>
-[[maybe_unused]] void arrange_data_roll(T* basePtr) {
-    for (int i = 0; i < regs[11]; ++i) {
-        for (int j = 0; j < regs[12]; ++j) {
-            for (int k = 0; k < regs[13]; ++k) {
-                basePtr[
-                        (i + regs[17]) % regs[14] * regs[15] * regs[16] +
-                        (j + regs[18]) % regs[15] * regs[16] +
-                        (k + regs[19]) % regs[16] +
-                        regs[21]
-                ] = basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[20]];
-            }
-        }
+template <typename T> [[maybe_unused]] void arrange_data_roll(T *basePtr) {
+  for (int i = 0; i < regs[11]; ++i) {
+    for (int j = 0; j < regs[12]; ++j) {
+      for (int k = 0; k < regs[13]; ++k) {
+        basePtr[(i + regs[17]) % regs[14] * regs[15] * regs[16] +
+                (j + regs[18]) % regs[15] * regs[16] +
+                (k + regs[19]) % regs[16] + regs[21]] =
+            basePtr[i * regs[12] * regs[13] + j * regs[13] + k + regs[20]];
+      }
     }
+  }
 }
 
-#endif //STP_DATA_SELECTION_AND_ARRANGEMENT_H
+#endif // STP_DATA_SELECTION_AND_ARRANGEMENT_H

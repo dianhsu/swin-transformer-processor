@@ -1,6 +1,3 @@
-#include "main.h"
+#include "main.hpp"
 
-int main() {
-
-    return 0;
-}
+int main() { return 0; }

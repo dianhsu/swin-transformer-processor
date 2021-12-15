@@ -1,0 +1,3 @@
+clang
+-IC:\Xilinx\Vitis_HLS\2021.2\include
+-std=c++20
